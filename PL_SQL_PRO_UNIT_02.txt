@@ -1,0 +1,96 @@
+---Ques#1
+create a procedure called add_job to insert a new job into 
+the jobs table.provide the id and job title using tow parameters.
+
+A.
+CREATE OR REPLACE PROCEDURE add_job 
+(p_id VARCHAR2, 
+ p_title VARCHAR2)
+IS
+BEGIN
+INSERT INTO jobs (job_id, job_title)
+VALUES (p_id, p_title);
+END add_job;
+/
+
+--invoke
+EXECUTE add_job('IT_DBA', 'Database Administrator');
+--
+SELECT * FROM jobs WHERE job_id='IT_DBA';
+
+
+
+---Ques#2
+create a procedure called upd_jobs to  update the job title.
+ provide the job id and a new title usng to parameters . including the 
+A.
+CREATE OR REPLACE PROCEDURE upd_job
+(p_id VARCHAR2, 
+ p_title VARCHAR2)
+IS
+BEGIN
+update jobs
+set job_title  = p_title
+where  job_id = p_id;
+IF SQL%NOTFOUND THEN
+RAISE_APPLICATION_ERROR(-20202, 'No Job Updated');
+END IF;
+END upd_job;
+/
+
+--invoke
+EXECUTE upd_job('IT_DBA', 'Data Administrator');
+--
+SELECT *FROM jobs WHERE job_id='IT_DBA';
+
+
+---Ques#3
+create a procedure called DEL_JOB TO delete a job include the 
+necessary exception handing code if no job is delete
+
+A.
+CREATE OR REPLACE PROCEDURE del_job
+(p_jobid VARCHAR2)
+IS
+BEGIN
+DELETE FROM jobs
+WHERE job_id = p_jobid;
+IF SQL%NOTFOUND THEN
+RAISE_APPLICATION_ERROR(-20203, 'No Jobs Delete'); 
+END IF;
+END del_job;
+/
+
+--invoke
+EXECUTE del_job('IT_DBA');
+
+select * from jobs where job_id ='IT_DBA';
+
+
+
+---Ques#4
+Create a procedure that returns a value from the salary and job_id columns
+for a specfied employee id remove syntax error, if any and then recoplic ta code
+A.
+CREATE OR REPLACE PROCEDURE get_employee
+(p_emp_id IN NUMBER,
+ p_sal OUT NUMBER, 
+ p_job_id OUT VARCHAR2)
+IS
+BEGIN
+SELECT salary, job_id 
+INTO p_sal, p_job_id FROM employees 
+WHERE employee_id=p_emp_id;
+END ;
+/
+
+
+B.
+DECLARE
+v_sal NUMBER;
+v_jid VARCHAR2(50);
+BEGIN
+get_employee(120, v_sal, v_jid);
+DBMS_OUTPUT.PUT_LINE(v_sal||' '||v_jid);
+END;
+/

@@ -1,0 +1,134 @@
+Question 1.
+
+1. Create a procedure called ADD_DEPT to insert a new department into the departments table. 
+Provide the DEPARTMENT NAME and LOCATION ID of the department using two parameters.
+
+
+-- Create Procedure
+CREATE OR REPLACE PROCEDURE ADD_DEPT
+(p_dept IN VARCHAR2,
+p_loc IN NUMBER) IS
+BEGIN
+INSERT INTO departments
+VALUES(DEPARTMENTS_SEQ.NEXTVAL, p_dept, null, p_loc);
+END;
+/
+
+-- Invoke the Procedure
+EXECUTE add_dept('Test 4', 3000);
+
+-- Check data
+SELECT * FROM departments
+WHERE department_name = 'Test 4';
+
+
+---delete 
+delete from departments where department_id =520;
+
+
+
+Question 2.
+
+2. Write a function that returns the total number of EMPLOYEES in the employee table.
+
+-- Create Function
+CREATE OR REPLACE FUNCTION emp_total 
+RETURN NUMBER
+IS
+v_count NUMBER;
+BEGIN
+SELECT COUNT(*) INTO v_count
+FROM employees;
+RETURN v_count;
+END;
+/
+
+
+
+
+-- Invoke the Procedure
+ execute DBMS_OUTPUT.PUT_LINE('Total employees: '||emp_total);
+
+
+
+
+Question 3.
+
+3. Create a procedure called GET_EMPLOYEE to query the EMPLOYEES table,
+retrieving the salary and job ID for an employee when provided with the employee ID.
+
+-- Create Procedure
+CREATE OR REPLACE PROCEDURE GET_EMPLOYEE
+(p_id IN NUMBER) IS
+v_sal NUMBER;
+v_job VARCHAR2(50);
+BEGIN
+SELECT salary, job_id INTO v_sal, v_job
+FROM employees
+WHERE employee_id = p_id;
+DBMS_OUTPUT.PUT_LINE('Salary is: '||v_sal||' '||'Job is: '||v_job);
+END;
+/
+
+-- Invoke Procedure
+EXECUTE GET_EMPLOYEE(105);
+
+Question 4.
+
+4.Write a trigger to prevent employees from being deleted during business hours (weekdays
+from 9:00 AM to 6:00 PM).
+
+-- Create Trigger
+CREATE OR REPLACE TRIGGER emp_del_trig
+BEFORE DELETE ON employees
+DECLARE
+v_day VARCHAR2(3) := TO_CHAR(SYSDATE, 'DY');
+v_time NUMBER := TO_CHAR(SYSDATE, 'HH24');
+BEGIN
+IF (v_day NOT IN ('FRI','SAT')) AND (v_time BETWEEN 9 AND 18) THEN
+RAISE_APPLICATION_ERROR (-20100, 'Employee records cannot be deleted 
+on weekdays during business hours');
+END IF;
+END;
+/
+
+-- Delete
+DELETE FROM employees
+WHERE employee_id = 104;
+
+Question 5.
+
+5.Write a trigger to generate a auto increment number for the department id before insert on the departments table.
+
+-- Create Trigger
+CREATE OR REPLACE TRIGGER trg_dept_id
+BEFORE INSERT ON departments
+FOR EACH ROW
+BEGIN
+IF (:new.department_id IS null) THEN
+    :new.department_id := DEPARTMENTS_SEQ.NEXTVAL;
+    END IF;
+END;
+/
+
+-- Insert Data
+INSERT INTO departments (department_name, location_id)
+VALUES('Test22', 3000);
+
+-- Check
+SELECT * FROM departments
+WHERE department_name = 'Test22';
+
+
+
+
+
+
+
+
+
+
+
+
+
+

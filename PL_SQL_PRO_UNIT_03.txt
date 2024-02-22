@@ -1,0 +1,86 @@
+---Ques#1
+create and compile a function called get_job to return a job title
+A.
+CREATE OR REPLACE FUNCTION get_job 
+(p_jobid IN VARCHAR2)
+RETURN VARCHAR2 
+IS
+v_title VARCHAR2(100);
+BEGIN
+SELECT job_title INTO v_title FROM jobs
+WHERE job_id=p_jobid;
+RETURN v_title;
+END get_job;
+/
+
+B.
+VARIABLE b_title VARCHAR2(35)
+EXECUTE :b_title:=get_job('SA_REP');
+PRINT  b_title
+
+
+
+---Ques#2
+create the get_annual_comp function. which accepts parameter values for the
+monthly salary and commission, dither or both values passed val
+
+A.
+CREATE OR REPLACE FUNCTION get_annual_comp
+(p_sal IN NUMBER, 
+p_comm IN NUMBER)
+RETURN NUMBER 
+IS
+BEGIN
+RETURN (NVL(p_sal,0)*12+(NVL(p_comm,0) * nvl (p_sal,0)*12));
+END get_annual_comp;
+/
+
+B.
+SELECT employee_id, last_name, 
+get_annual_comp(salary, commission_pct) "Annual Compensation"
+FROM employees 
+WHERE department_id=30;
+
+
+
+
+---Ques#3
+create a function  call valid_deptid to validate a specificted department id and
+return a boolean value of true if the department exit
+A.
+CREATE OR REPLACE FUNCTION valid_deptid
+(p_deptid IN NUMBER)
+RETURN BOOLEAN IS
+v_num NUMBER;
+BEGIN
+SELECT 1 INTO v_num FROM departments 
+WHERE department_id = p_deptid;
+RETURN TRUE;
+EXCEPTION
+WHEN NO_DATA_FOUND THEN
+RETURN FALSE;
+END valid_deptid;
+/
+
+
+
+C.
+EXECUTE add_employee('Jane', 'Harris', 'JHARRIS', 'ST_MAN', NULL, NULL,NULL, p_dept_id=>15);
+
+D.
+EXECUTE add_employee('Jane', 'Harris', 'JHARRIS', 'ST_MAN', NULL, NULL,NULL, p_dept_id= 40);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
